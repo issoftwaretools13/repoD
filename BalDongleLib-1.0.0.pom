@@ -24,23 +24,5 @@
       <version>2.5.1</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <artifactId>BalNetStackLib</artifactId>
-      <groupId>com.balnostix.core</groupId>
-      <version>1.0.0</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <artifactId>BalUDSStackLib</artifactId>
-      <groupId>com.balnostix.core</groupId>
-      <version>1.0.0</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <artifactId>BalNostixBase</artifactId>
-      <groupId>com.balnostix.core</groupId>
-      <version>1.0.0</version>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 </project>
