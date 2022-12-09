@@ -19,11 +19,14 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	@NonNull OutputStream mOutputStream 
 	which app need to get form 'BluetoothSocket' instance of connected device.
 
-# Step 1.1. once you have the instance of BALBTDongleLib then you need to initialize the dongle by calling the below function
+# Step 1.1. once you have the instance of BALBTDongleLib then you need to initialize the dongle by calling the below function soon after the Step 1.
 	boolean BTDongleComm = balBTDongleLib.initBTDongleComm(bt_dongle_name);
+# Step 1.2. To set the package directory so lib can access all the downloaded files in the application, call the below function call once Step 1.1 has returned true i.e. `BTDongleComm`
+  	balBTDongleLib.setPackageDir(Context context);
+## Note: Step 1. and Step 1.1 Step 1.2 call is mandatory. Call it together every time a connection is established
 
-# Step 1.2. to stop the communication between dongle and application, call the below function
-  	readDongleData.stop();
+# Step 1.3. to stop the communication between dongle and application, call the below function
+  	balBTDongleLib.stop();
 
 # Step 2. List of all the methods along with implementaion details are given below. Call the methods as per the need
 
@@ -92,7 +95,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ```
 public interface BALBTDongleApiLinkage {
     public boolean initBTDongleComm(String bt_dongle_name);
-    
+    public void setPackageDir(Context context) throws Exception;
     public LiveData<String> readVIN();
     public boolean isValidVin(@NonNull String vin);
     public void writeVIN(String vin);
@@ -136,6 +139,12 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     public boolean initBTDongleComm(String bt_dongle_name) {
         boolean BTDongleComm=balBTDongleLib.initBTDongleComm(bt_dongle_name);
         return BTDongleComm;
+    }
+
+    @Override
+    public void setPackageDir(Context context) throws Exception {
+        String packageDir=context.getDataDir().getAbsolutePath();
+        this.balbtDongleLib.setPackageDir(packageDir);
     }
 
     @Override
