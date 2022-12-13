@@ -21,8 +21,15 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 # Step 1.1. once you have the instance of BALBTDongleLib then you need to initialize the dongle by calling the below function soon after the Step 1.
 	boolean BTDongleComm = balBTDongleLib.initBTDongleComm(bt_dongle_name);
+    # this parameter is : String bt_dongle_name
+    # Note:
+        1) invalid inputs for this function will be : null, " ", numeric input, special character
+        2) valid input example: BAL_BTDongleR2_052  
 # Step 1.2. To set the package directory so lib can access all the downloaded files in the application, call the below function call once Step 1.1 has returned true i.e. `BTDongleComm`
-  	balBTDongleLib.setPackageDir(Context context);
+  	balBTDongleLib.setPackageDir(String packageDir);
+    # Note:
+        1) the packageDir should not be null or empty otherwise it will throw an exception "Package dir should not be null or empty".
+        2) the packageDir should consist the valid filename otherwise it will throw an exception "Package dir should not be vaild path". 
 ## Note: Step 1. and Step 1.1 Step 1.2 call is mandatory. Call it together every time a connection is established
 
 # Step 1.3. to stop the communication between dongle and application, call the below function
@@ -44,31 +51,35 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 3: to validate if VIN is not Null and the length of vin is 17, call the below function
 	boolean isvalid = balBTDongleLib.isValidVin(vin);
 	# the parameter are: @NonNull String vin
-
+   
 ### Method 3.1: to write a vin, call the below function and before calling this method call isValidVin function
 	balBTDongleLib.writeVIN(vin);
 	# this parameter is : @NonNull String vin
-
+    # Note: The vin should not be empty string and should be a valid VIN i.e. its length should be 17.
+    
 ## Screen 3: List of Ecu's
  
 ### Method 4: to get all the ECU records, call the funtion below and pass the downloaded Ecu records as string parameter to this function
 	ArrayList<ECURecord> ecuRecordList= balBTDongleLib.getEcuRecords(ecuRecordsJson);
 	# the parameter is : @NonNull String ecuRecordsJson
+    # Note: The ecuRecordsJson should be a string in JSON format otherwise it will throw an exception. 
 
 ### Method 5: to get a particular ECU record, call the function below
 	ECURecord ecuRecord = balBTDongleLib.getEcuRecord(pos);
 	# the parameter is : int pos (position of the a particular record)
+    # Note: The pos should not be a negative number and shoud be less than or equal to the size of ecuRecordsList that is formed in 'method 4'.
 
 ## Screen 4: Function selection
 
 ### Method 6: to get the list of all the error codes, call the function below
 	ArrayList errorCodeList = balBTDongleLib.getListOfErrorCode(ecuRecord);
 	# the parameter is: ECURecord ecuRecord
+    # Note: The ecuRecord parameter should not be null otherwise it will throw an exception and application will crash. 
 
 ### Method 6.1: to clear the active and inactive error codes, call the function below
-	 LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord);	
-	 # the parameter is: ECURecord ecuRecord
-
+	LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord);	
+	# the parameter is: ECURecord ecuRecord
+     
 ### Method 6.2: to update the status of cleared active and inactive error codes, call the function below
 	LiveData<String> clearStatus = balBTDongleLib.clearDTCStaus(ecuRecord);
 	# the parameter is: ECURecord ecuRecord
@@ -80,6 +91,10 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 7.1: to get the list of DID read parameter names, call the function below
 	LiveData<String> readParameterList = balBTDongleLib.getListOfReadParameter(ecuRecord,groupName);
 	# the parameter is: ECURecord ecuRecord, String groupName
+    # Note: 
+        1) Both the parameters should not be null otherwise there will be a nullPointerException and application will crash.
+        2) groupName should be a valid group name which should be present in didGroups List from 'Method 7'.
+        3) ecuRecord should be a valid record which should be present in ecuRecordList from 'Method 4'.
 
 ### Method 8: to start the actuator routines, call the function below
 	LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines();
