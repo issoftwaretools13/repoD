@@ -114,21 +114,25 @@ public interface BALBTDongleApiLinkage {
     public LiveData<String> readVIN();
     public boolean isValidVin(@NonNull String vin);
     public void writeVIN(String vin);
-    
+    public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord);
     public ArrayList<ECURecord> getEcuRecords(@NonNull String ecuRecordsJson);
     public ECURecord getEcuRecord( int pos);
-
+    public ArrayList<DtcStatusType> getDtcStatusTypeList();
     public ArrayList getListOfErrorCode(ECURecord ecuRecord);
     public LiveData<String> clearErrorCode(ECURecord ecuRecord);
     public LiveData<String> clearDTCStaus(ECURecord ecuRecord);
-    
+    public void getUDSParameter(ECURecord ecuRecord);
     public ArrayList<String> getDIDGroups(ECURecord ecuRecord);
     public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName);
-    
+    public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord);
+    public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord);
+    public LiveData<String> updateUIDataUpdated();
+    public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord);
+    public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos);
     public LiveData<String> startAnalyticsGraph();
     public LiveData<String> startActuatorRoutines();
     public LiveData<String> updateBootLoader();
-
+    
     public void resetConfig();
     public void stop();
 
@@ -243,7 +247,38 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     public void resetConfig() {
         balBTDongleLib.resetConfig();
     }
-
+    @Override
+    public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord){
+        return balbtDeviseDongle.scanDtcErrorCode(ecuRecord);
+    }
+    @Override
+    public ArrayList<DtcStatusType> getDtcStatusTypeList() {
+        return balbtDeviseDongle.getDtcStatusTypeList();
+    }
+    @Override
+    public void getUDSParameter(ECURecord ecuRecord) {
+         balbtDeviseDongle.getUDSParameter(ecuRecord);
+    }
+    @Override
+    public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord) {
+        return balbtDeviseDongle.getFlashingUpdate(ecuRecord);
+    }
+    @Override
+    public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord) {
+        return balbtDeviseDongle.getFlashingUpdate(ecuRecord);
+    }
+    @Override
+    public LiveData<String> updateUIDataUpdated() {
+        return balbtDeviseDongle.updateUIDataUpdated();
+    }
+    @Override
+    public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord) {
+         return balbtDeviseDongle.getListOfWritableDidParameter(ecuRecord);
+    }
+    @Override
+    public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos) {
+        balbtDeviseDongle.writeDidParameter(ecuRecord,readParameterModel,pos);
+    }
     @Override
     public void stop() {
         balBTDongleLib.stop();
