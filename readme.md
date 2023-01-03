@@ -81,7 +81,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	# the parameter is: ECURecord ecuRecord
      
 ### Method 6.2: to update the status of cleared active and inactive error codes, call the function below
-	LiveData<String> clearStatus = balBTDongleLib.clearDTCStaus(ecuRecord);
+	ArrayList<DtcStatusType> StatusTypeList = balBTDongleLib.getDtcStatusTypeList(ecuRecord);
 	# the parameter is: ECURecord ecuRecord
 
 ### Method 7: to get DID groups, call the function below
@@ -104,6 +104,10 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 ### Method 10: to update the bootloader, call the function below
 	LiveData<String> updateBoot = balBTDongleLib.updateBootLoader();
+### Method 11: to get the list of DID write parameter names, call the function below
+	List<ReadParameterModel> writeParameterList = balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
+### Method 11.1: to write the DID write parameter value, call the function below
+	balBTDongleLib.writeDidParameter(ecuRecord, readParameterModel, pos);	
 
 # BALBTDongleApiLinkage Interface Implementaion is shown below
 
