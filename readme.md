@@ -75,25 +75,21 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
     balBTDongleLib.getUDSParameter(ecuRecord);
     # the parameter is: ECURecord ecuRecord
 
-### Method 7: to get the list of all the error codes, call the function below
+### Method 7: to get the list of fault names from the parsed dtc xml file and return to update the data on UI,  call the function below
 	ArrayList errorCodeList = balBTDongleLib.getListOfErrorCode(ecuRecord);
 	# the parameter is: ECURecord ecuRecord
-    # Note: The ecuRecord parameter should not be null otherwise it will throw an exception and application will crash. 
+    # Note: 1) The ecuRecord parameter should not be null otherwise it will throw an exception and application will crash.
+            2) parse the xml once and keep it ready to the filter data 
 
-### Method 7.1: to get the list of fault names from the parsed dtc xml file and return to update the data on UI,  call the function below
-    ArrayList<ErrorCodeModel> listOfErrorCode = balBTDongleLib.getListOfErrorCode(ecuRecord);
-    # the parameter is: ECURecord ecuRecord
-    # Note: parse the xml once and keep it ready to the filter data
-
-### Method 7.2: to send the parsed xml file data to vehicle to get the status of the list of faults, call the function below
+### Method 7.1: to send the parsed xml file data to vehicle to get the status of the list of faults, call the function below
     LiveData<ArrayList<ErrorCodeModel>> dtcErrorCode = balBTDongleLib.scanDtcErrorCode(ecuRecord);
     # the parameter is: ECURecord ecuRecord
     # Note: On call of this method it will parse the xml one time per session and on time out it will post the empty arraylist and immediately return the Live data
 
-### Method 7.3: to get the list to DTC status types and show them on UI before clearing DTC, call the function below
+### Method 7.2: to get the list to DTC status types and show them on UI before clearing DTC, call the function below
     ArrayList<DtcStatusType> dtcStatusTypeList = balBTDongleLib.getDtcStatusTypeList();
 
-### Method 7.4: to clear the active and inactive error codes, call the function below
+### Method 7.3: to clear the active and inactive error codes, call the function below
 	LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord,statusType);	
 	# the parameter is: ECURecord ecuRecord, DtcStatusType statusType
     # Note: The statusType parameter will specify the status of the error it can be either (Active,InActive or Both).
@@ -161,7 +157,6 @@ public interface BALBTDongleApiLinkage {
     public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord);
     public ArrayList<DtcStatusType> getDtcStatusTypeList();
     public LiveData<String> clearErrorCode(ECURecord ecuRecord);
-    public LiveData<String> clearDTCStaus(ECURecord ecuRecord);
     
     public ArrayList<String> getDIDGroups(ECURecord ecuRecord);
     public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName);
@@ -266,12 +261,6 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     public LiveData<String> clearErrorCode(ECURecord ecuRecord) {
         LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord);
         return clrErrCode;
-    }
-
-    @Override
-    public LiveData<String> clearDTCStaus(ECURecord ecuRecord) {
-        LiveData<String> status=balBTDongleLib.clearDTCStaus(ecuRecord);
-        return status;
     }
 
     @Override
