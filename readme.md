@@ -44,7 +44,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	
 ### Method 1.1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig(ecuRecord);
+<<<<<<< HEAD
     # the parameter is: ECURecord ecuRecord	
+=======
+        # the parameter is: ECURecord ecuRecord	
+>>>>>>> ecba888d0a231574e7276db2f8d60293931d880d
 	
 ### Method 1.2: to check if the device is connected with the bluetooth, call the below function 
     boolean checkConnection =  balBTDongleLib.isConnected();
@@ -149,6 +153,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
     # Note: call the Method 5 to get ecuRecord
 
 ### Method 14: to update the data returned by a synchronous call at later point on UI, so when you are updating call the function below so it will trigger the update for each UI call
+    #few methods are: getListOfReadParameter(ECURecord ecuRecord, String groupName),getListOfWritableDidParameter(ECURecord ecuRecord)},getListOfErrorCode(ECURecord ecuRecord)},writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos)}
     LiveData<String> uiDataUpdated = balBTDongleLib.updateUIDataUpdated();
     Note: register this call on every screen
 
@@ -170,19 +175,30 @@ public interface BALBTDongleApiLinkage {
     public LiveData<String> clearErrorCode(ECURecord ecuRecord);
    
     
+
 	public boolean isConnected();
+
+    public boolean isConnected();
+
     public ArrayList<String> getDIDGroups(ECURecord ecuRecord);
     public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName);
     public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord);
     public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord);
     public LiveData<String> updateUIDataUpdated();
+
 	public void readEcuBasicnfo(ECURecord ecuRecord);
+
+    public void readEcuBasicnfo(ECURecord ecuRecord);
+
     public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord);
     public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos);
     public LiveData<String> startAnalyticsGraph();
     public LiveData<String> startActuatorRoutines();
     public void getUDSParameter(ECURecord ecuRecord);
-    public LiveData<String> updateBootLoader(); 
+
+    public LiveData<String> updateBootLoader();
+    public LiveData<String> updateBootLoader();
+    
     public void resetConfig();
 	public void resetConfig(ECURecord ecuRecord);
     public void stop();
