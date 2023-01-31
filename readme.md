@@ -182,8 +182,7 @@ public interface BALBTDongleApiLinkage {
     public LiveData<String> startAnalyticsGraph();
     public LiveData<String> startActuatorRoutines();
     public void getUDSParameter(ECURecord ecuRecord);
-    public LiveData<String> updateBootLoader();
-    
+    public LiveData<String> updateBootLoader(); 
     public void resetConfig();
 	public void resetConfig(ECURecord ecuRecord);
     public void stop();
