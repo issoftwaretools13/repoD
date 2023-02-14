@@ -172,10 +172,6 @@ public interface BALBTDongleApiLinkage {
    
     public ArrayList<DtcStatusType> getDtcStatusTypeList();
     public LiveData<String> clearErrorCode(ECURecord ecuRecord);
-   
-    
-
-	public boolean isConnected();
 
     public boolean isConnected();
 
