@@ -44,11 +44,10 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	
 ### Method 1.1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig(ecuRecord);
-<<<<<<< HEAD
     # the parameter is: ECURecord ecuRecord	
-=======
-        # the parameter is: ECURecord ecuRecord	
->>>>>>> ecba888d0a231574e7276db2f8d60293931d880d
+
+        
+
 	
 ### Method 1.2: to check if the device is connected with the bluetooth, call the below function 
     boolean checkConnection =  balBTDongleLib.isConnected();
