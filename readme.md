@@ -180,20 +180,13 @@ public interface BALBTDongleApiLinkage {
     public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord);
     public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord);
     public LiveData<String> updateUIDataUpdated();
-
 	public void readEcuBasicnfo(ECURecord ecuRecord);
-
-    public void readEcuBasicnfo(ECURecord ecuRecord);
-
     public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord);
     public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos);
     public LiveData<String> startAnalyticsGraph();
     public LiveData<String> startActuatorRoutines();
     public void getUDSParameter(ECURecord ecuRecord);
-
     public LiveData<String> updateBootLoader();
-    public LiveData<String> updateBootLoader();
-    
     public void resetConfig();
 	public void resetConfig(ECURecord ecuRecord);
     public void stop();
