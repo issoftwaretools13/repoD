@@ -42,12 +42,6 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig();
 	
-### Method 1.1: to reset Dongle for other functionality, call the below function 
-	balBTDongleLib.resetConfig(ecuRecord);
-    # the parameter is: ECURecord ecuRecord	
-
-        
-
 	
 ### Method 1.2: to check if the device is connected with the bluetooth, call the below function 
     boolean checkConnection =  balBTDongleLib.isConnected();
@@ -73,7 +67,10 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	ArrayList<ECURecord> ecuRecordList= balBTDongleLib.getEcuRecords(ecuRecordsJson);
 	# the parameter is : @NonNull String ecuRecordsJson
     # Note: The ecuRecordsJson should be a string in JSON format otherwise it will throw an exception. 
-
+### Method 4.1: to reset Dongle for other functionality, call the below function 
+	balBTDongleLib.resetConfig(ecuRecord);
+    # the parameter is: ECURecord ecuRecord	
+	
 ### Method 5: to get a particular ECU record, call the function below
 	ECURecord ecuRecord = balBTDongleLib.getEcuRecord(pos);
 	# the parameter is : int pos (position of the a particular record)
