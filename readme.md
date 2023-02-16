@@ -159,16 +159,18 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 public interface BALBTDongleApiLinkage {
     public boolean initBTDongleComm(String bt_dongle_name);
     public void setPackageDir(String packageDir) throws Exception;
+    public void resetConfig();
     public LiveData<String> readVIN();
     public boolean isValidVin(@NonNull String vin);
     public void writeVIN(String vin);
     public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord);
     public ArrayList<ECURecord> getEcuRecords(@NonNull String ecuRecordsJson);
     public ECURecord getEcuRecord( int pos);
+    public void resetConfig(ECURecord ecuRecord);
     public ArrayList getListOfErrorCode(ECURecord ecuRecord);
    
     public ArrayList<DtcStatusType> getDtcStatusTypeList();
-    public LiveData<String> clearErrorCode(ECURecord ecuRecord);
+    public LiveData<String> clearErrorCode(ECURecord ecuRecord,DtcStatusType statusType);
 
     public boolean isConnected();
 
@@ -184,8 +186,6 @@ public interface BALBTDongleApiLinkage {
     public LiveData<String> startActuatorRoutines();
     public void getUDSParameter(ECURecord ecuRecord);
     public LiveData<String> updateBootLoader();
-    public void resetConfig();
-	public void resetConfig(ECURecord ecuRecord);
     public void stop();
     
 }
@@ -273,8 +273,8 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     }
 
     @Override
-    public LiveData<String> clearErrorCode(ECURecord ecuRecord) {
-        LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord);
+    public LiveData<String> clearErrorCode(ECURecord ecuRecord,DtcStatusType statusType) {
+        LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord,statusType);
         return clrErrCode;
     }
 
