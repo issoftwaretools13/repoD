@@ -50,7 +50,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 ### Method 2: to read a vin and return live data string, call the below function
 	LiveData<String> liveReadVinData = balBTDongleLib.readVIN();
-
+        #Note:
+	 This LiveData method will give you following Json format string values
+	 1)true,"ConfigReset"
+	 2)true,"Error"
+	 3)true,"ConnectionLost"
 
 ### Method 3: to validate if VIN is not Null and the length of vin is 17, call the below function
 	boolean isvalid = balBTDongleLib.isValidVin(vin);
@@ -104,6 +108,9 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord,statusType);	
 	# the parameter is: ECURecord ecuRecord, DtcStatusType statusType
     # Note: The statusType parameter will specify the status of the error it can be either (Active,InActive or Both).
+	 This LiveData method will give you following Json format string values
+	 1)true,"Rescan"
+	 
 
 ### Method 8: to get DID groups, call the function below
 	ArrayList<String> didGroups = balBTDongleLib.getDIDGroups(ecuRecord);
@@ -151,8 +158,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 14: to update the data returned by a synchronous call at later point on UI, so when you are updating call the function below so it will trigger the update for each UI call
     #few methods are: getListOfReadParameter(ECURecord ecuRecord, String groupName),getListOfWritableDidParameter(ECURecord ecuRecord)},getListOfErrorCode(ECURecord ecuRecord)},writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos)}
     LiveData<String> uiDataUpdated = balBTDongleLib.updateUIDataUpdated();
-    Note: register this call on every screen
-
+    Note: register this call on every screen 
+	 This LiveData method will give you following Json format string values
+	 1)true,"readEcuBasicInfo"
+	 2)true,"startProgress"
+	 
 # BALBTDongleApiLinkage Interface Implementaion is shown below
 
 ```
