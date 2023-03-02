@@ -42,6 +42,9 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig();
 	
+### Method 1.1: to reset Dongle for other functionality, call the below function 
+	balBTDongleLib.resetConfig(ecuRecord);
+    # the parameter is: ECURecord ecuRecord	
 	
 ### Method 1.2: to check if the device is connected with the bluetooth, call the below function 
     boolean checkConnection =  balBTDongleLib.isConnected();
@@ -52,9 +55,9 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	LiveData<String> liveReadVinData = balBTDongleLib.readVIN();
         #Note:
 	 This LiveData method will give you following Json format string values
-	 1)true,"ConfigReset"
-	 2)true,"Error"
-	 3)true,"ConnectionLost"
+	 1)Status:true,value: "ConfigReset"
+	 2)Status:true,value: "Error"
+	 3)Status:true,value: "ConnectionLost"
 
 ### Method 3: to validate if VIN is not Null and the length of vin is 17, call the below function
 	boolean isvalid = balBTDongleLib.isValidVin(vin);
@@ -71,6 +74,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	ArrayList<ECURecord> ecuRecordList= balBTDongleLib.getEcuRecords(ecuRecordsJson);
 	# the parameter is : @NonNull String ecuRecordsJson
     # Note: The ecuRecordsJson should be a string in JSON format otherwise it will throw an exception. 
+	
 ### Method 4.1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig(ecuRecord);
     # the parameter is: ECURecord ecuRecord	
@@ -98,8 +102,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 ### Method 7.1: to send the parsed xml file data to vehicle to get the status of the list of faults, call the function below
     LiveData<ArrayList<ErrorCodeModel>> dtcErrorCode = balBTDongleLib.scanDtcErrorCode(ecuRecord);
+	
     # the parameter is: ECURecord ecuRecord
-    # Note: On call of this method it will parse the xml one time per session and on time out it will post the empty arraylist and immediately return the Live data
+    # Note: 
+	1) On call of this method it will parse the xml one time per session and on time out it will post the empty arraylist and immediately return the Live data
+	2) This Live data method will return ArrayList<ErrorCodeModel>.
 
 ### Method 7.2: to get the list to DTC status types and show them on UI before clearing DTC, call the function below
     ArrayList<DtcStatusType> dtcStatusTypeList = balBTDongleLib.getDtcStatusTypeList();
@@ -108,9 +115,9 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord,statusType);	
 	# the parameter is: ECURecord ecuRecord, DtcStatusType statusType
     # Note: The statusType parameter will specify the status of the error it can be either (Active,InActive or Both).
-	 This LiveData method will give you following Json format string values
-	 1)true,"Rescan"
-	 
+	 This LiveData method will give you following string values
+	 1)value="Rescan"
+	 2)value=nrc message
 
 ### Method 8: to get DID groups, call the function below
 	ArrayList<String> didGroups = balBTDongleLib.getDIDGroups(ecuRecord);
@@ -138,8 +145,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 11.1: to get the update regarding bootloader flashing, call the function below
     LiveData<FlashingUpdateModel> bootFlashingUpdate = balBTDongleLib.getBootFlashingUpdate(ecuRecord);
     # the parameter is: ECURecord ecuRecord 
-    # Note: call the Method 5 to get ecuRecord
-
+    # Note: 
+	1) call the Method 5 to get ecuRecord
+	2) This LiveData method will give you FlashingUpdateModel. In FlashingUpdateModel the value of status can be as follows:-
+		"Parsing", "Flashing", "Completed" 
+		
 ### Method 12: to get the update regarding flashing of any ECU, call the function below
     LiveData<FlashingUpdateModel> flashingUpdate = balBTDongleLib.getFlashingUpdate(ecuRecord);
     # the parameter is: ECURecord ecuRecord 
@@ -159,9 +169,14 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
     #few methods are: getListOfReadParameter(ECURecord ecuRecord, String groupName),getListOfWritableDidParameter(ECURecord ecuRecord)},getListOfErrorCode(ECURecord ecuRecord)},writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos)}
     LiveData<String> uiDataUpdated = balBTDongleLib.updateUIDataUpdated();
     Note: register this call on every screen 
-	 This LiveData method will give you following Json format string values
-	 1)true,"readEcuBasicInfo"
-	 2)true,"startProgress"
+	 This LiveData method will give you following string values
+	 1)status: true,status:"readEcuBasicInfo"
+	 2) status: true, value:"updateAll"
+	 3) status:true , value:value correspondng to the particular did record
+	 4) value="Rescan"
+	 5) value=nrc message
+	 6) value="startProgress"
+	 
 	 
 # BALBTDongleApiLinkage Interface Implementaion is shown below
 
@@ -176,6 +191,13 @@ public interface BALBTDongleApiLinkage {
     public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord);
     public ArrayList<ECURecord> getEcuRecords(@NonNull String ecuRecordsJson);
     public ECURecord getEcuRecord( int pos);
+    public ArrayList getListOfErrorCode(ECURecord ecuRecord);
+   
+    public ArrayList<DtcStatusType> getDtcStatusTypeList();
+    public LiveData<String> clearErrorCode(ECURecord ecuRecord);
+   
+    
+	public boolean isConnected();
     public void resetConfig(ECURecord ecuRecord);
     public ArrayList getListOfErrorCode(ECURecord ecuRecord);
    
@@ -183,9 +205,8 @@ public interface BALBTDongleApiLinkage {
     public LiveData<String> clearErrorCode(ECURecord ecuRecord,DtcStatusType statusType);
 
     public boolean isConnected();
-
     public ArrayList<String> getDIDGroups(ECURecord ecuRecord);
-    public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName);
+    public ArrayList<ReadParameterModel> getListOfReadParameter(ECURecord ecuRecord, String groupName);
     public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord);
     public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord);
     public LiveData<String> updateUIDataUpdated();
@@ -196,6 +217,10 @@ public interface BALBTDongleApiLinkage {
     public LiveData<String> startActuatorRoutines();
     public void getUDSParameter(ECURecord ecuRecord);
     public LiveData<String> updateBootLoader();
+
+    
+    public void resetConfig();
+	public void resetConfig(ECURecord ecuRecord);
     public void stop();
     
 }
@@ -295,8 +320,8 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     }
 
     @Override
-    public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName) {
-        LiveData<String> readParameterList = balBTDongleLib.getListOfReadParameter(ecuRecord,groupName);
+    public ArrayList<ReadParameterModel> getListOfReadParameter(ECURecord ecuRecord, String groupName) {
+        ArrayList<ReadParameterModel> readParameterList = balBTDongleLib.getListOfReadParameter(ecuRecord,groupName);
         return readParameterList;
     }
 
@@ -345,14 +370,7 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     public void resetConfig() {
         balBTDongleLib.resetConfig();
     }
-    @Override
-    public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord){
-        return balBTDongleLib.scanDtcErrorCode(ecuRecord);
-    }
-    @Override
-    public ArrayList<DtcStatusType> getDtcStatusTypeList() {
-        return balBTDongleLib.getDtcStatusTypeList();
-    }
+  
     @Override
     public void getUDSParameter(ECURecord ecuRecord) {
          balBTDongleLib.getUDSParameter(ecuRecord);
