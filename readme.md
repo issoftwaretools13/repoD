@@ -29,7 +29,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
   	balBTDongleLib.setPackageDir(String packageDir);
     # Note:
         1) the packageDir should not be null or empty otherwise it will throw an exception "Package dir should not be null or empty".
-        2) the packageDir should consist the valid filename otherwise it will throw an exception "Package dir should not be vaild path". 
+        2) the packageDir should consist the valid folder otherwise it will throw an exception "Package dir should not be vaild path". 
 ## Note: Step 1. and Step 1.1 Step 1.2 call is mandatory. Call it together every time a connection is established
 
 # Step 1.3. to stop the communication between dongle and application, call the below function
@@ -37,16 +37,12 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 # Step 2. List of all the methods along with implementaion details are given below. Call the methods as per the need
 
-## Screen 1: bluetooth dongle pairing screen
+## Screen 1: Bluetooth dongle pairing screen
 
 ### Method 1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig();
 	
-### Method 1.1: to reset Dongle for other functionality, call the below function 
-	balBTDongleLib.resetConfig(ecuRecord);
-    # the parameter is: ECURecord ecuRecord	
-	
-### Method 1.2: to check if the device is connected with the bluetooth, call the below function 
+### Method 1.1: to check if the device is connected with the bluetooth, call the below function 
     boolean checkConnection =  balBTDongleLib.isConnected();
 	
 ## Screen 2: Read VIN 
@@ -55,9 +51,18 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	LiveData<String> liveReadVinData = balBTDongleLib.readVIN();
         #Note:
 	 This LiveData method will give you following Json format string values
-	 1)Status:true,value: "ConfigReset"
-	 2)Status:true,value: "Error"
-	 3)Status:true,value: "ConnectionLost"
+	 1) {
+			Status:true,
+			value: "ConfigReset"
+		}
+	 2){
+			Status:true,
+			value: "Error"
+		}
+	 3){
+			Status:true,
+			value: "ConnectionLost"
+		}
 
 ### Method 3: to validate if VIN is not Null and the length of vin is 17, call the below function
 	boolean isvalid = balBTDongleLib.isValidVin(vin);
@@ -94,6 +99,8 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
     balBTDongleLib.getUDSParameter(ecuRecord);
     # the parameter is: ECURecord ecuRecord
 
+## Screen 5: Error Codes
+
 ### Method 7: to get the list of fault names from the parsed dtc xml file and return to update the data on UI,  call the function below
 	ArrayList errorCodeList = balBTDongleLib.getListOfErrorCode(ecuRecord);
 	# the parameter is: ECURecord ecuRecord
@@ -119,6 +126,8 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	 1)value="Rescan"
 	 2)value=nrc message
 
+## Screen 6: Read Parameters
+
 ### Method 8: to get DID groups, call the function below
 	ArrayList<String> didGroups = balBTDongleLib.getDIDGroups(ecuRecord);
 	# the parameter is: ECURecord ecuRecord
@@ -131,52 +140,72 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
         2) groupName should be a valid group name which should be present in didGroups List from 'Method 7'.
         3) ecuRecord should be a valid record which should be present in ecuRecordList from 'Method 4'.
 
-### Method 9: to start the actuator routines, call the function below
-	LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines();
+## Screen 7: Write Parameters
 
-### Method 10: to start the analytics graph, call the function below
-	LiveData<String> srtAnaGraph = balBTDongleLib.startAnalyticsGraph();
+### Method 9: to get the list of writable DID parameters, call the function below
+    List<ReadParameterModel> listOfWritableDidParameter = balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
+    # the parameter is: ECURecord ecuRecord 
+    # Note: call the Method 5 to get ecuRecord
+
+### Method 9.1: to write the particular writable parameter, call the function below
+    balBTDongleLib.writeDidParameter(ecuRecord,readParameterModel,pos)
+    # the parameter is: ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos
+    # Note: call the Method 5 to get ecuRecord
+	
+## Screen 8: Re-Program
+
+### Method 10: to get the update regarding flashing of any ECU, call the function below
+    LiveData<FlashingUpdateModel> flashingUpdate = balBTDongleLib.getFlashingUpdate(ecuRecord);
+    # the parameter is: ECURecord ecuRecord 
+    # Note: call the Method 5 to get ecuRecord 
+	
+## Screen 9: Update Boot
 
 ### Method 11: to update the bootloader, call the function below
 	LiveData<String> updateBoot = balBTDongleLib.updateBootLoader();
-### Method 11: to get the list of DID write parameter names, call the function below
-	List<ReadParameterModel> writeParameterList = balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
-
+	
 ### Method 11.1: to get the update regarding bootloader flashing, call the function below
     LiveData<FlashingUpdateModel> bootFlashingUpdate = balBTDongleLib.getBootFlashingUpdate(ecuRecord);
     # the parameter is: ECURecord ecuRecord 
     # Note: 
 	1) call the Method 5 to get ecuRecord
 	2) This LiveData method will give you FlashingUpdateModel. In FlashingUpdateModel the value of status can be as follows:-
-		"Parsing", "Flashing", "Completed" 
-		
-### Method 12: to get the update regarding flashing of any ECU, call the function below
-    LiveData<FlashingUpdateModel> flashingUpdate = balBTDongleLib.getFlashingUpdate(ecuRecord);
-    # the parameter is: ECURecord ecuRecord 
-    # Note: call the Method 5 to get ecuRecord 
+		"Parsing", "Flashing", "Completed".		
 
-### Method 13: to get the list of writable DID parameters, call the function below
-    List<ReadParameterModel> listOfWritableDidParameter = balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
-    # the parameter is: ECURecord ecuRecord 
-    # Note: call the Method 5 to get ecuRecord
+## Screen 10: Actuator Routines
 
-### Method 13.1: to write the particular writable parameter, call the function below
-    balBTDongleLib.writeDidParameter(ecuRecord,readParameterModel,pos)
-    # the parameter is: ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos
-    # Note: call the Method 5 to get ecuRecord
+### Method 12: to start the actuator routines, call the function below
+	LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines();
 
-### Method 14: to update the data returned by a synchronous call at later point on UI, so when you are updating call the function below so it will trigger the update for each UI call
-    #few methods are: getListOfReadParameter(ECURecord ecuRecord, String groupName),getListOfWritableDidParameter(ECURecord ecuRecord)},getListOfErrorCode(ECURecord ecuRecord)},writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos)}
+## Screen 11: Analytics Graph
+
+### Method 13: to start the analytics graph, call the function below
+	LiveData<String> srtAnaGraph = balBTDongleLib.startAnalyticsGraph();
+
+## Method 14: to update the data returned by a synchronous call at later point on UI, so when you are updating call the function below so it will trigger the update for each UI call
+    # few methods are: getListOfReadParameter(ECURecord ecuRecord, String groupName),getListOfWritableDidParameter(ECURecord ecuRecord)},getListOfErrorCode(ECURecord ecuRecord)},writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos)}
     LiveData<String> uiDataUpdated = balBTDongleLib.updateUIDataUpdated();
-    Note: register this call on every screen 
-	 This LiveData method will give you following string values
-	 1)status: true,status:"readEcuBasicInfo"
-	 2) status: true, value:"updateAll"
-	 3) status:true , value:value correspondng to the particular did record
-	 4) value="Rescan"
-	 5) value=nrc message
-	 6) value="startProgress"
+    # Note: register this call on every screen 
+	# This LiveData method will give you following string values
 	 
+	 From Screen 6, on call of 'getListOfReadParameter' function:
+	 1) {
+			status: true,
+			status:"readEcuBasicInfo"
+		}
+	 2) {
+			status: true,
+			value: "updateAll"
+		}
+	 3) {
+			status: true ,
+			value: value correspondng to the particular did record
+		}
+	 
+	 From Screen 7, on the call of 'writeDidParameter' function the values of status can be as follows:
+		"Rescan", "startProgress", nrc message
+	
+	 	 
 	 
 # BALBTDongleApiLinkage Interface Implementaion is shown below
 
