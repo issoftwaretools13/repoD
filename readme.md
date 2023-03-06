@@ -202,7 +202,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 			value: value correspondng to the particular did record
 		}
 	 
-	 From Screen 7, on the call of 'writeDidParameter' function the values of status can be as follows:
+	 From Screen 7, on the call of 'writeDidParameter' function, the string value that can be returned as follows:
 		"Rescan", "startProgress", nrc message
 	
 	 	 
