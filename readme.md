@@ -80,6 +80,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	# the parameter is : @NonNull String ecuRecordsJson
     # Note: The ecuRecordsJson should be a string in JSON format otherwise it will throw an exception. 
 	
+
 ### Method 4.1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig(ecuRecord);
     # the parameter is: ECURecord ecuRecord	
@@ -187,19 +188,21 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
     LiveData<String> uiDataUpdated = balBTDongleLib.updateUIDataUpdated();
     # Note: register this call on every screen 
 	# This LiveData method will give you following string values
-	 
-	 From Screen 6, on call of 'getListOfReadParameter' function:
-	 1) {
+	 From Screen 3, on call of 'readEcuBasicnfo' function:
+	1) {
 			status: true,
-			status:"readEcuBasicInfo"
+			value:"readEcuBasicInfo"
 		}
+	 From Screen 6, on call of 'getListOfReadParameter' function:
 	 2) {
 			status: true,
-			value: "updateAll"
+			valueFor: "updateAll"
 		}
 	 3) {
 			status: true ,
+			valueFor: description of  particular did record ,
 			value: value correspondng to the particular did record
+			
 		}
 	 
 	 From Screen 7, on the call of 'writeDidParameter' function, the string value that can be returned as follows:
