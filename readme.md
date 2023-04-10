@@ -29,7 +29,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
   	balBTDongleLib.setPackageDir(String packageDir);
     # Note:
         1) the packageDir should not be null or empty otherwise it will throw an exception "Package dir should not be null or empty".
-        2) the packageDir should consist the valid filename otherwise it will throw an exception "Package dir should not be vaild path". 
+        2) the packageDir should consist the valid folder otherwise it will throw an exception "Package dir should not be vaild path". 
 ## Note: Step 1. and Step 1.1 Step 1.2 call is mandatory. Call it together every time a connection is established
 
 # Step 1.3. to stop the communication between dongle and application, call the below function
@@ -37,24 +37,40 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 # Step 2. List of all the methods along with implementaion details are given below. Call the methods as per the need
 
-## Screen 1: bluetooth dongle pairing screen
+## Screen 1: Bluetooth dongle pairing screen
 
 ### Method 1: to reset Dongle for other functionality, call the below function 
 	balBTDongleLib.resetConfig();
-
+	
+### Method 1.1: to check if the device is connected with the bluetooth, call the below function 
+    boolean checkConnection =  balBTDongleLib.isConnected();
+	
 ## Screen 2: Read VIN 
 
 ### Method 2: to read a vin and return live data string, call the below function
 	LiveData<String> liveReadVinData = balBTDongleLib.readVIN();
-
+        #Note:
+	 This LiveData method will give you following Json format string values
+	 1) {
+			Status:true,
+			value: "ConfigReset"
+		}
+	 2){
+			Status:true,
+			value: "Error"
+		}
+	 3){
+			Status:true,
+			value: "ConnectionLost"
+		}
 
 ### Method 3: to validate if VIN is not Null and the length of vin is 17, call the below function
 	boolean isvalid = balBTDongleLib.isValidVin(vin);
 	# the parameter are: @NonNull String vin
    
 ### Method 3.1: to write a vin, call the below function and before calling this method call isValidVin function
-	balBTDongleLib.writeVIN(vin);
-	# this parameter is : @NonNull String vin
+	LiveData<FlashingUpdateModel> VinWrite = balBTDongleLib.writeVIN(vin,ecuRecord);
+	# this parameter is : @NonNull String vin,ECURecord ecuRecord
     # Note: The vin should not be empty string and should be a valid VIN i.e. its length should be 17.
 
 ## Screen 3: List of Ecu's
@@ -63,17 +79,28 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	ArrayList<ECURecord> ecuRecordList= balBTDongleLib.getEcuRecords(ecuRecordsJson);
 	# the parameter is : @NonNull String ecuRecordsJson
     # Note: The ecuRecordsJson should be a string in JSON format otherwise it will throw an exception. 
+	
 
+### Method 4.1: to reset Dongle for other functionality, call the below function 
+	balBTDongleLib.resetConfig(ecuRecord);
+    # the parameter is: ECURecord ecuRecord	
+	
 ### Method 5: to get a particular ECU record, call the function below
 	ECURecord ecuRecord = balBTDongleLib.getEcuRecord(pos);
 	# the parameter is : int pos (position of the a particular record)
     # Note: The pos should not be a negative number and shoud be less than or equal to the size of ecuRecordsList that is formed in 'method 4'.
-
+	
+### Method 5.1: to get the information related to the particular ECU, call the below function 
+	balBTDongleLib.readEcuBasicnfo(ecuRecord);
+	# the parameter is: ECURecord ecuRecord	
+	
 ## Screen 4: Function selection
 
 ### Method 6: call this method on ecu clicked or on function selection load first call
     balBTDongleLib.getUDSParameter(ecuRecord);
     # the parameter is: ECURecord ecuRecord
+
+## Screen 5: Error Codes
 
 ### Method 7: to get the list of fault names from the parsed dtc xml file and return to update the data on UI,  call the function below
 	ArrayList errorCodeList = balBTDongleLib.getListOfErrorCode(ecuRecord);
@@ -83,8 +110,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 ### Method 7.1: to send the parsed xml file data to vehicle to get the status of the list of faults, call the function below
     LiveData<ArrayList<ErrorCodeModel>> dtcErrorCode = balBTDongleLib.scanDtcErrorCode(ecuRecord);
+	
     # the parameter is: ECURecord ecuRecord
-    # Note: On call of this method it will parse the xml one time per session and on time out it will post the empty arraylist and immediately return the Live data
+    # Note: 
+	1) On call of this method it will parse the xml one time per session and on time out it will post the empty arraylist and immediately return the Live data
+	2) This Live data method will return ArrayList<ErrorCodeModel>.
 
 ### Method 7.2: to get the list to DTC status types and show them on UI before clearing DTC, call the function below
     ArrayList<DtcStatusType> dtcStatusTypeList = balBTDongleLib.getDtcStatusTypeList();
@@ -93,6 +123,11 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 	LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord,statusType);	
 	# the parameter is: ECURecord ecuRecord, DtcStatusType statusType
     # Note: The statusType parameter will specify the status of the error it can be either (Active,InActive or Both).
+	 This LiveData method will give you following string values
+	 1)value="Rescan"
+	 2)value=nrc message
+
+## Screen 6: Read Parameters
 
 ### Method 8: to get DID groups, call the function below
 	ArrayList<String> didGroups = balBTDongleLib.getDIDGroups(ecuRecord);
@@ -106,77 +141,152 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
         2) groupName should be a valid group name which should be present in didGroups List from 'Method 7'.
         3) ecuRecord should be a valid record which should be present in ecuRecordList from 'Method 4'.
 
-### Method 9: to start the actuator routines, call the function below
-	LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines();
+## Screen 7: Write Parameters
 
-### Method 10: to start the analytics graph, call the function below
-	LiveData<String> srtAnaGraph = balBTDongleLib.startAnalyticsGraph();
-
-### Method 11: to update the bootloader, call the function below
-	LiveData<String> updateBoot = balBTDongleLib.updateBootLoader();
-### Method 11: to get the list of DID write parameter names, call the function below
-	List<ReadParameterModel> writeParameterList = balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
-### Method 11.1: to write the DID write parameter value, call the function below
-	balBTDongleLib.writeDidParameter(ecuRecord, readParameterModel, pos);	
-
-### Method 11.1: to get the update regarding bootloader flashing, call the function below
-    LiveData<FlashingUpdateModel> bootFlashingUpdate = balBTDongleLib.getBootFlashingUpdate(ecuRecord);
-    # the parameter is: ECURecord ecuRecord 
-    # Note: call the Method 5 to get ecuRecord
-
-### Method 12: to get the update regarding flashing of any ECU, call the function below
-    LiveData<FlashingUpdateModel> flashingUpdate = balBTDongleLib.getFlashingUpdate(ecuRecord);
-    # the parameter is: ECURecord ecuRecord 
-    # Note: call the Method 5 to get ecuRecord 
-
-### Method 13: to get the list of wriable DID parameters, call the function below
+### Method 9: to get the list of writable DID parameters, call the function below
     List<ReadParameterModel> listOfWritableDidParameter = balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
     # the parameter is: ECURecord ecuRecord 
     # Note: call the Method 5 to get ecuRecord
 
-### Method 13.1: to write the particular writable parameter, call the function below
+### Method 9.1: to write the particular writable parameter, call the function below
     balBTDongleLib.writeDidParameter(ecuRecord,readParameterModel,pos)
     # the parameter is: ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos
     # Note: call the Method 5 to get ecuRecord
+	
+## Screen 8: Re-Program
 
-### Method 14: to update the data returned by a synchronous call at later point on UI, so when you are updating call the function below so it will trigger the update for each UI call
+### Method 10: to get the update regarding flashing of any ECU, call the function below
+    LiveData<FlashingUpdateModel> flashingUpdate = balBTDongleLib.getFlashingUpdate(ecuRecord);
+    # the parameter is: ECURecord ecuRecord 
+    # Note: call the Method 5 to get ecuRecord 
+	
+## Screen 9: Update Boot
+
+### Method 11: to update the bootloader, call the function below
+	LiveData<String> updateBoot = balBTDongleLib.updateBootLoader();
+	
+### Method 11.1: to get the update regarding bootloader flashing, call the function below
+    LiveData<FlashingUpdateModel> bootFlashingUpdate = balBTDongleLib.getBootFlashingUpdate(ecuRecord);
+    # the parameter is: ECURecord ecuRecord 
+    # Note: 
+	1) call the Method 5 to get ecuRecord
+	2) This LiveData method will give you FlashingUpdateModel. In FlashingUpdateModel the value of status can be as follows:-
+		"Parsing", "Flashing", "Completed".		
+
+## Screen 10: Actuator Routines
+### Method 12: to display the actuator routines, call the function below
+	LiveData<String> dispActuRoutines = balBTDongleLib.displayListActuatorRoutines(ECURecord ecuRecord);
+
+### Method 12.1: to start the actuator routines, call the function below
+	LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos);
+
+## Screen 11: Analytics Graph
+
+### Method 13: to start the analytics graph, call the function below
+	LiveData<String> srtAnaGraph = balBTDongleLib.startAnalyticsGraph();
+
+## Method 14: to update the data returned by a synchronous call at later point on UI, so when you are updating call the function below so it will trigger the update for each UI call
+    # few methods are: getListOfReadParameter(ECURecord ecuRecord, String groupName),getListOfWritableDidParameter(ECURecord ecuRecord)},getListOfErrorCode(ECURecord ecuRecord)},writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos)}
     LiveData<String> uiDataUpdated = balBTDongleLib.updateUIDataUpdated();
-    Note: register this call on every screen
-
+    # Note: register this call on every screen 
+	# This LiveData method will give you following string values
+	 From Screen 3, on call of 'readEcuBasicnfo' function:
+	1) {
+			status: true,
+			value:"readEcuBasicInfo"
+		}
+	 From Screen 6, on call of 'getListOfReadParameter' function:
+	 2) {
+			status: true,
+			valueFor: "updateAll"
+		}
+	 3) {
+			status: true ,
+			valueFor: description of  particular did record ,
+			value: value correspondng to the particular did record
+			
+		}
+	 
+	 From Screen 7, on the call of 'writeDidParameter' function, the string value that can be returned as follows:
+		"Rescan", "startProgress", nrc message
+	
+## Utility function
+### Method 15: these method will provide the list of failure BAL log Files
+     File[] ArrayOfBalFailLogFiles = balbtDeviseDongle.getArrayOfBalFailLogFiles()
+### Method 15.1:
+	 List<File> ListOfBalFailLogFiles = Arrays.asList(balbtDeviseDongle.getArrayOfBalFailLogFiles());
+### Method 16: these method will provide the list of failure BAL log File Names
+      String[] ArrayOfBalFailLogFileNames = balbtDeviseDongle.getArrayOfBalFailLogFileNames();
+### Method 16.1:
+      List<String> ListOfBalFailLogFileNames = Arrays.asList(balbtDeviseDongle.getArrayOfBalFailLogFileNames());	
+### Method 17: these method will provide the list of failure App log files
+      File[] ArrayOfBalAppLogFiles =  balbtDeviseDongle.getArrayOfBalAppLogFiles();
+### Method 17.1:
+	  List<File> ListOfBalAppLogFiles = Arrays.asList(balbtDeviseDongle.getArrayOfBalAppLogFiles()); 
+### Method 18: these method will provide the list of failure App log File Names	 
+      String[] ArrayOfBalAppLogFileNames = balbtDeviseDongle.getArrayOfBalAppLogFileNames();
+### Method 18.1:
+	List<String> ListOfBalAppLogFileNames = Arrays.asList(balbtDeviseDongle.getArrayOfBalAppLogFileNames());
+### Method 19: call these on New Thread other then the UI thread
+    boolean AppLogs = balbtDeviseDongle.saveAppLog(ecuRecord);
+### Method 19.1:	
+	boolean AppLogs = balbtDeviseDongle.saveAppLog();
 # BALBTDongleApiLinkage Interface Implementaion is shown below
 
 ```
 public interface BALBTDongleApiLinkage {
     public boolean initBTDongleComm(String bt_dongle_name);
-    public void setPackageDir(Context context) throws Exception;
+    public void setPackageDir(String packageDir) throws Exception;
+    public void resetConfig();
     public LiveData<String> readVIN();
     public boolean isValidVin(@NonNull String vin);
-    public void writeVIN(String vin);
+    public LiveData<FlashingUpdateModel> writeVIN(String vin,ECURecord ecuRecord);
     public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord);
     public ArrayList<ECURecord> getEcuRecords(@NonNull String ecuRecordsJson);
     public ECURecord getEcuRecord( int pos);
-    public ArrayList<DtcStatusType> getDtcStatusTypeList();
     public ArrayList getListOfErrorCode(ECURecord ecuRecord);
    
     public ArrayList<DtcStatusType> getDtcStatusTypeList();
     public LiveData<String> clearErrorCode(ECURecord ecuRecord);
    
-    public void getUDSParameter(ECURecord ecuRecord);
+    
+	public boolean isConnected();
+    public void resetConfig(ECURecord ecuRecord);
+    public ArrayList getListOfErrorCode(ECURecord ecuRecord);
+   
+    public ArrayList<DtcStatusType> getDtcStatusTypeList();
+    public LiveData<String> clearErrorCode(ECURecord ecuRecord,DtcStatusType statusType);
+
+    public boolean isConnected();
     public ArrayList<String> getDIDGroups(ECURecord ecuRecord);
-    public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName);
+    public ArrayList<ReadParameterModel> getListOfReadParameter(ECURecord ecuRecord, String groupName);
     public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord);
     public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord);
     public LiveData<String> updateUIDataUpdated();
+	public void readEcuBasicnfo(ECURecord ecuRecord);
     public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord);
     public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos);
     public LiveData<String> startAnalyticsGraph();
-    public LiveData<String> startActuatorRoutines();
-
+	public ArrayList<Routine> displayListActuatorRoutines(ECURecord ecuRecord);
+    public LiveData<String> startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos);
+    public void getUDSParameter(ECURecord ecuRecord);
     public LiveData<String> updateBootLoader();
+    public File[] getArrayOfBalFailLogFiles();
+    public List<File> getListOfBalFailLogFiles();
+    public String[] getArrayOfBalFailLogFileNames();
+    public List<String> getListOfBalFailLogFileNames();
+    public File[] getArrayOfBalAppLogFiles();
+    public List<File> getListOfBalAppLogFiles();
+    public String[] getArrayOfBalAppLogFileNames();
+    public List<String> getListOfBalAppLogFileNames();
+    public boolean saveAppLog(ECURecord ecuRecord);
+    public boolean saveAppLog();
     
     public void resetConfig();
+	public void resetConfig(ECURecord ecuRecord);
     public void stop();
-
+	
+    
 }
 
 ```
@@ -202,9 +312,8 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     }
 
     @Override
-    public void setPackageDir(Context context) throws Exception {
-        String packageDir=context.getDataDir().getAbsolutePath();
-        this.balbtDongleLib.setPackageDir(packageDir);
+    public void setPackageDir(String setPackageDir) throws Exception {
+        balbtDongleLib.setPackageDir(packageDir);
     }
 
     @Override
@@ -220,14 +329,20 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     }
 
     @Override
-    public void writeVIN(String vin) {
-        balBTDongleLib.writeVIN(vin);
-    }
+    public LiveData<FlashingUpdateModel> writeVIN(String vin,ECURecord ecuRecord) {
+       LiveData<FlashingUpdateModel> VinWrite= balBTDongleLib.writeVIN(vin,ecuRecord);
+       return VinWrite;
+	}
 
     @Override
     public ArrayList<ECURecord> getEcuRecords(@NonNull String ecuRecordsJson) {
         ArrayList<ECURecord> ecuRecordList= balBTDongleLib.getEcuRecords(ecuRecordsJson);
         return ecuRecordList;
+    }
+	
+	@Override
+    public void readEcuBasicnfo(ECURecord ecuRecord){
+        balBTDongleLib.readEcuBasicnfo(ecuRecord);
     }
 
     @Override
@@ -238,7 +353,7 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
 
     @Override
     public void getUDSParameter(ECURecord ecuRecord) {
-         balbtDeviseDongle.getUDSParameter(ecuRecord);
+         balBTDongleLib.getUDSParameter(ecuRecord);
     }
 
     @Override
@@ -249,17 +364,17 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
 
     @Override
     public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord){
-        return balbtDeviseDongle.scanDtcErrorCode(ecuRecord);
+        return balBTDongleLib.scanDtcErrorCode(ecuRecord);
     }
 
     @Override
     public ArrayList<DtcStatusType> getDtcStatusTypeList() {
-        return balbtDeviseDongle.getDtcStatusTypeList();
+        return balBTDongleLib.getDtcStatusTypeList();
     }
 
     @Override
-    public LiveData<String> clearErrorCode(ECURecord ecuRecord) {
-        LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord);
+    public LiveData<String> clearErrorCode(ECURecord ecuRecord,DtcStatusType statusType) {
+        LiveData<String> clrErrCode= balBTDongleLib.clearErrorCode(ecuRecord,statusType);
         return clrErrCode;
     }
 
@@ -270,8 +385,8 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
     }
 
     @Override
-    public LiveData<String> getListOfReadParameter(ECURecord ecuRecord, String groupName) {
-        LiveData<String> readParameterList = balBTDongleLib.getListOfReadParameter(ecuRecord,groupName);
+    public ArrayList<ReadParameterModel> getListOfReadParameter(ECURecord ecuRecord, String groupName) {
+        ArrayList<ReadParameterModel> readParameterList = balBTDongleLib.getListOfReadParameter(ecuRecord,groupName);
         return readParameterList;
     }
 
@@ -280,10 +395,16 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
         LiveData<String> srtAnaGraph = balBTDongleLib.startAnalyticsGraph();
         return srtAnaGraph;
     }
+	@Override
+    public LiveData<String> displayListActuatorRoutines(ECURecord ecuRecord) {
+        LiveData<String> dispActuRoutines = balBTDongleLib.startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos);
+        return dispActuRoutines;
+    }
+
 
     @Override
-    public LiveData<String> startActuatorRoutines() {
-        LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines();
+    public LiveData<String> startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos) {
+        LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos);
         return srtActuRoutines;
     }
 
@@ -295,59 +416,103 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
 
     @Override
     public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord) {
-        return balbtDeviseDongle.getFlashingUpdate(ecuRecord);
+        return balBTDongleLib.getFlashingUpdate(ecuRecord);
     }
 
     @Override
     public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord) {
-        return balbtDeviseDongle.getFlashingUpdate(ecuRecord);
+        return balBTDongleLib.getFlashingUpdate(ecuRecord);
     }
 
     @Override
     public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord) {
-         return balbtDeviseDongle.getListOfWritableDidParameter(ecuRecord);
+         return balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
     }
     
     @Override
     public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos) {
-        balbtDeviseDongle.writeDidParameter(ecuRecord,readParameterModel,pos);
+        balBTDongleLib.writeDidParameter(ecuRecord,readParameterModel,pos);
     }
-
+    @Override
+    public void resetConfig(ECURecord ecuRecord) {
+        balBTDongleLib.resetConfig(ecuRecord);
+    }
     @Override
     public void resetConfig() {
         balBTDongleLib.resetConfig();
     }
-    @Override
-    public LiveData<ArrayList<ErrorCodeModel>> scanDtcErrorCode(ECURecord ecuRecord){
-        return balbtDeviseDongle.scanDtcErrorCode(ecuRecord);
-    }
-    @Override
-    public ArrayList<DtcStatusType> getDtcStatusTypeList() {
-        return balbtDeviseDongle.getDtcStatusTypeList();
-    }
+  
     @Override
     public void getUDSParameter(ECURecord ecuRecord) {
-         balbtDeviseDongle.getUDSParameter(ecuRecord);
+         balBTDongleLib.getUDSParameter(ecuRecord);
     }
     @Override
     public LiveData<FlashingUpdateModel> getFlashingUpdate(ECURecord ecuRecord) {
-        return balbtDeviseDongle.getFlashingUpdate(ecuRecord);
+        return balBTDongleLib.getFlashingUpdate(ecuRecord);
     }
     @Override
     public LiveData<FlashingUpdateModel> getBootFlashingUpdate(ECURecord ecuRecord) {
-        return balbtDeviseDongle.getFlashingUpdate(ecuRecord);
+        return balBTDongleLib.getFlashingUpdate(ecuRecord);
     }
     @Override
     public LiveData<String> updateUIDataUpdated() {
-        return balbtDeviseDongle.updateUIDataUpdated();
+        return balBTDongleLib.updateUIDataUpdated();
     }
     @Override
     public List<ReadParameterModel> getListOfWritableDidParameter(ECURecord ecuRecord) {
-         return balbtDeviseDongle.getListOfWritableDidParameter(ecuRecord);
+         return balBTDongleLib.getListOfWritableDidParameter(ecuRecord);
     }
     @Override
     public void writeDidParameter(ECURecord ecuRecord, ReadParameterModel readParameterModel, int pos) {
-        balbtDeviseDongle.writeDidParameter(ecuRecord,readParameterModel,pos);
+        balBTDongleLib.writeDidParameter(ecuRecord,readParameterModel,pos);
+    }
+	@Override
+	public File[] getArrayOfBalFailLogFiles(){
+        return balbtDeviseDongle.getArrayOfBalFailLogFiles();
+    }
+    @Override
+    public List<File> getListOfBalFailLogFiles(){
+        return Arrays.asList(balbtDeviseDongle.getArrayOfBalFailLogFiles());
+    }
+
+    @Override
+    public String[] getArrayOfBalFailLogFileNames(){
+        return balbtDeviseDongle.getArrayOfBalFailLogFileNames();
+    }
+    @Override
+    public List<String> getListOfBalFailLogFileNames(){
+        return Arrays.asList(balbtDeviseDongle.getArrayOfBalFailLogFileNames());
+    }
+
+   @Override
+    public File[] getArrayOfBalAppLogFiles(){
+        return balbtDeviseDongle.getArrayOfBalAppLogFiles();
+    }
+    @Override
+    public List<File> getListOfBalAppLogFiles(){
+        return Arrays.asList(balbtDeviseDongle.getArrayOfBalAppLogFiles());
+    }
+
+    @Override
+    public String[] getArrayOfBalAppLogFileNames(){
+        return balbtDeviseDongle.getArrayOfBalAppLogFileNames();
+    }
+    @Override
+    public List<String> getListOfBalAppLogFileNames(){
+        return Arrays.asList(balbtDeviseDongle.getArrayOfBalAppLogFileNames());
+    }
+
+    @Override
+    public boolean saveAppLog(ECURecord ecuRecord){
+        return balbtDeviseDongle.saveAppLog(ecuRecord);
+    }
+    @Override
+    public boolean saveAppLog(){
+        return balbtDeviseDongle.saveAppLog(null);
+    }
+	@Override
+    public boolean isConnected()  {
+       return balBTDongleLib.isConnected();
     }
     @Override
     public void stop() {
