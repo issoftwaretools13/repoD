@@ -67,8 +67,10 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 ### Method 3: to validate if VIN is not Null and the length of vin is 17, call the below function
 	boolean isvalid = balBTDongleLib.isValidVin(vin);
 	# the parameter are: @NonNull String vin
-   
-### Method 3.1: to write a vin, call the below function and before calling this method call isValidVin function
+### Method 3.1: to validate the VIN format while barcode scan and when user is entering the VIN manually, call the below function
+	boolean isvalidVIN  = balBTDongleLib.validateVIN(vin);
+	# the parameter are: @NonNull String vin
+### Method 3.2: to write a vin, call the below function and before calling this method call isValidVin function
 	LiveData<FlashingUpdateModel> VinWrite = balBTDongleLib.writeVIN(vin,ecuRecord);
 	# this parameter is : @NonNull String vin,ECURecord ecuRecord
     # Note: The vin should not be empty string and should be a valid VIN i.e. its length should be 17.
