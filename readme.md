@@ -177,7 +177,7 @@ The below sample of code is in Java. Syntax may vary in other languages like kot
 
 ## Screen 10: Actuator Routines
 ### Method 12: to display the actuator routines, call the function below
-	LiveData<String> dispActuRoutines = balBTDongleLib.displayListActuatorRoutines(ECURecord ecuRecord);
+	ArrayList<Routine> dispActuRoutines = balBTDongleLib.displayListActuatorRoutines(ECURecord ecuRecord);
 
 ### Method 12.1: to start the actuator routines, call the function below
 	LiveData<String> srtActuRoutines = balBTDongleLib.startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos);
@@ -397,8 +397,8 @@ public class BALBTDongleApiImpl implements BALBTDongleApiLinkage {
         return srtAnaGraph;
     }
 	@Override
-    public LiveData<String> displayListActuatorRoutines(ECURecord ecuRecord) {
-        LiveData<String> dispActuRoutines = balBTDongleLib.startActuatorRoutines(ECURecord ecuRecord,Routine routine,int pos);
+    public ArrayList<Routine> displayListActuatorRoutines(ECURecord ecuRecord) {
+        ArrayList<Routine> dispActuRoutines = balBTDongleLib.displayListActuatorRoutines(ECURecord ecuRecord);
         return dispActuRoutines;
     }
 
